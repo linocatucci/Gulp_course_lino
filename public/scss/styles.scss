@@ -1,0 +1,25 @@
+@import './reset/_basic-reset.scss';
+
+$grey: f7f7f7;
+$yellow: yellow;
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+  background: $grey;
+  // background: $yellow;
+}
+
+image {
+  margin-bottom: 3rem;
+}
+
+h1,
+p {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+}

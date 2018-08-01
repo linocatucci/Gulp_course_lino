@@ -1,3 +1,3 @@
-var name = 'Lino';
+var name = 'Junior';
 
 document.write('Hello ' + name + '!');
