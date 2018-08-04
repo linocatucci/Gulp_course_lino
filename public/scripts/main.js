@@ -11,7 +11,7 @@ class Person {
   }
 }
 
-var person = new Person('Suzan');
+var person = new Person('Lino');
 
 //var name = 'Lino';
 
