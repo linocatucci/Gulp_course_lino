@@ -10,6 +10,7 @@ var minifyCSS = require('gulp-minify-css');
 var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var sass = require('gulp-sass');
+var babel = require('gulp-babel');
 
 // gulp tasks:
 // styles, min css, concatenating and prefix
@@ -64,6 +65,7 @@ gulp.task('scripts', function(cb) {
     [
       gulp.src(SCRIPTS_PATH),
       sourcemaps.init(),
+      babel(),
       uglify(),
       concat('scripts.js'),
       sourcemaps.write(),
