@@ -14,7 +14,7 @@ var sass = require('gulp-sass');
 // gulp tasks:
 // styles, min css, concatenating and prefix
 // in here we use pump and the callback (cb) for error message,
-// you can also use the package plumber
+// you can also use the package plumber, but pump does it automatically
 
 // sourcemaps will show the css files in your chrome dev tools as separate files (home and reset instead of styles.css)
 // FOR REGULAR CSS
@@ -63,8 +63,10 @@ gulp.task('scripts', function(cb) {
   pump(
     [
       gulp.src(SCRIPTS_PATH),
+      sourcemaps.init(),
       uglify(),
       concat('scripts.js'),
+      sourcemaps.write(),
       gulp.dest(DIST_PATH),
       livereload()
     ],
