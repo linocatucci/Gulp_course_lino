@@ -8,18 +8,26 @@ var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var sass = require('gulp-sass');
 var babel = require('gulp-babel');
+var del = require('del');
 
 // FILE PATHS
 var SCRIPTS_PATH = './public/scripts/**/*.js'; // the ** will also take all folders under scripts and look for .js files
 var CSS_PATH = 'public/css/**/*.css';
 var DIST_PATH = 'public/dist';
 var TEMPLATES_PATH = 'templates/**/*.hbs';
+var IMAGES_PATH = 'public/images/**/*.{png,svg,jpg,jpeg,gif}';
 
 // Handlebars plugins
 var handlebars = require('gulp-handlebars');
 var handlebarsLib = require('handlebars'); // this is used to run the gulp-handlebars to run through a specific version of the handlebars lib. You need to have the gulp-handlebars task along with the library
 var declare = require('gulp-declare'); // lets us declare new variables inside of gulp
 var wrap = require('gulp-wrap'); // let's us wrap our files in a set of code
+
+// images compression plugins
+var imagemin = require('gulp-imagemin');
+var imageminPngquant = require('imagemin-pngquant');
+var imageminJpegRecompress = require('imagemin-jpeg-recompress');
+
 // gulp tasks:
 // styles, min css, concatenating and prefix
 // in here we use pump and the callback (cb) for error message,
@@ -86,7 +94,18 @@ gulp.task('scripts', function(cb) {
 
 // images compressing images
 gulp.task('images', function() {
-  console.log('images task compression');
+  pump([
+    gulp.src(IMAGES_PATH),
+    imagemin([
+      imagemin.gifsicle(),
+      imagemin.jpegtran(),
+      imagemin.optipng(),
+      imagemin.svgo(),
+      imageminPngquant(),
+      imageminJpegRecompress()
+    ]),
+    gulp.dest(DIST_PATH + '/images')
+  ]);
 });
 
 // templates task
@@ -108,6 +127,11 @@ gulp.task('templates', function(cb) {
     ],
     cb
   );
+});
+
+// DELETE TASK
+gulp.task('clean', function(cb) {
+  pump([del.sync([DIST_PATH])], cb);
 });
 
 // Default task
