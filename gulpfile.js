@@ -1,9 +1,6 @@
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var pump = require('pump');
-var SCRIPTS_PATH = './public/scripts/**/*.js'; // the ** will also take all folders under scripts and look for .js files
-var CSS_PATH = 'public/css/**/*.css';
-var DIST_PATH = 'public/dist';
 var livereload = require('gulp-livereload');
 var concat = require('gulp-concat');
 var minifyCSS = require('gulp-minify-css');
@@ -12,6 +9,17 @@ var sourcemaps = require('gulp-sourcemaps');
 var sass = require('gulp-sass');
 var babel = require('gulp-babel');
 
+// FILE PATHS
+var SCRIPTS_PATH = './public/scripts/**/*.js'; // the ** will also take all folders under scripts and look for .js files
+var CSS_PATH = 'public/css/**/*.css';
+var DIST_PATH = 'public/dist';
+var TEMPLATES_PATH = 'templates/**/*.hbs';
+
+// Handlebars plugins
+var handlebars = require('gulp-handlebars');
+var handlebarsLib = require('handlebars'); // this is used to run the gulp-handlebars to run through a specific version of the handlebars lib. You need to have the gulp-handlebars task along with the library
+var declare = require('gulp-declare'); // lets us declare new variables inside of gulp
+var wrap = require('gulp-wrap'); // let's us wrap our files in a set of code
 // gulp tasks:
 // styles, min css, concatenating and prefix
 // in here we use pump and the callback (cb) for error message,
@@ -81,12 +89,33 @@ gulp.task('images', function() {
   console.log('images task compression');
 });
 
+// templates task
+gulp.task('templates', function(cb) {
+  pump(
+    [
+      gulp.src(TEMPLATES_PATH),
+      handlebars({
+        handlebars: handlebarsLib
+      }),
+      wrap('Handlebars.template(<%= contents %>)'),
+      declare({
+        namespace: 'templates',
+        noRedeclare: true
+      }),
+      concat('templates.js'),
+      gulp.dest(DIST_PATH),
+      livereload()
+    ],
+    cb
+  );
+});
+
 // Default task
-gulp.task('default', function() {
+gulp.task('default', ['images', 'scripts', 'styles', 'templates'], function() {
   console.log('default Gulp task!');
 });
 
-gulp.task('watch', function() {
+gulp.task('watch', ['default'], function() {
   console.log('starting watch task!');
   require('./server.js'); // start the server and watch
   livereload.listen();
@@ -94,4 +123,5 @@ gulp.task('watch', function() {
   //   gulp.watch([SCRIPTS_PATH, CSS_PATH], ['scripts', 'styles']); //dit kan ook in de array opgenomen worden
   // gulp.watch([CSS_PATH], ['styles']);
   gulp.watch(['./public/scss/**/*.scss'], ['styles']);
+  gulp.watch([TEMPLATES_PATH], ['templates']);
 });

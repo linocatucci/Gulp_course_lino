@@ -11,9 +11,12 @@ class Person {
   }
 }
 
-var person = new Person('Lino');
+var person = new Person('Andrew');
 
 //var name = 'Lino';
-
+var greetHTML = templates['greeting']({
+  message: person.hello()
+});
 // document.write('Hello ' + name + '!');
-document.write(person.hello());
+// document.write(person.hello());
+document.write(greetHTML);
